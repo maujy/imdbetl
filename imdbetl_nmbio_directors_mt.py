@@ -13,7 +13,7 @@ import requests
 from bs4 import BeautifulSoup as bs
 import concurrent.futures
 
-WORKERNUM = 60
+WORKERNUM = 90
 RETRYTIME = 0.3
 # dprint = print
 def dprint(s):
@@ -76,8 +76,9 @@ def worker(index):
     soup = bs(resp.text, 'html5lib')
     try:
         # according to the tag of jumpto list to get personal information
-        biography=soup.find('div', class_='jumpto').find_all('a')
-        if (biography is not None):
+        jumpto = soup.find('div', class_='jumpto')
+        if (jumpto is not None):
+            biography = jumpto.find_all('a')
             for bio in biography:
                 category = bio["href"].replace("#","")
                 tag = soup.find('a', attrs={'name':category}).find_next().find_next()
@@ -94,9 +95,11 @@ def worker(index):
                         text += ' '.join(tag.text.replace("\n","").split())
                         tag = tag.find_next_sibling()
                     nmbio_df.loc[index,category] = text
-            global writer             
-            writer.writerow(nmbio_df.iloc[index].to_dict())
-            mbio_df.iloc[index]=""
+        else:
+            print("no jumpto: %s"%(nmbio_df.loc[index,'nconst']))
+        global writer             
+        writer.writerow(nmbio_df.iloc[index].to_dict())
+        mbio_df.iloc[index]=""
         return
     except:
         traceback.print_exc(limit=1, file=sys.stdout)
