@@ -13,7 +13,7 @@ import requests
 from bs4 import BeautifulSoup as bs
 import concurrent.futures
 
-WORKERNUM = 90
+WORKERNUM = 60
 RETRYTIME = 0.3
 # dprint = print
 def dprint(s):
