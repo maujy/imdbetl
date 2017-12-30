@@ -97,8 +97,9 @@ def worker(index):
                     nmbio_df.loc[index,category] = text
         else:
             print("no jumpto: %s"%(nmbio_df.loc[index,'nconst']))
-        global writer             
+        global csvfile, writer             
         writer.writerow(nmbio_df.iloc[index].to_dict())
+        csvfile.flush()
         mbio_df.iloc[index]=""
         return
     except:
@@ -110,7 +111,6 @@ with concurrent.futures.ThreadPoolExecutor(max_workers=WORKERNUM) as executor:
     executor.map(worker,range(0,len(nmbio_df)))
 #     executor.map(worker,range(0,10000)) 
        
-csvfile.flush()
 csvfile.close()
 
 tEnd = time.time()
