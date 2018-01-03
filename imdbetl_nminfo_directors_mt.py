@@ -20,7 +20,7 @@ import concurrent.futures
 
 WORKERNUM = 30
 RETRYTIME = 0.3
-# dprint = print
+#dprint = print
 def dprint(s):
     True
 
@@ -30,11 +30,12 @@ NMINFOFILE = "./output/movie_directors_nminfo_list.csv"
 NMINFOFIELDS = ['nconst', 'starmeter', 'award', 'akas', 'director', 'producer', 'writer',
                 'actor', 'actress', 'miscellaneous', 
                 'assistant_director', 'art_director', 'set_decorator', 'casting_director',
-                'editor', 'soundtrack', 'composer', 'stunts', 
+                'editor', 'soundtrack', 'composer', 'stunts', 'special_effects',
                 'cinematographer', 'visual_effects', 'costume_designer',
                 'camera_department', 'editorial_department', 'music_department', 'sound_department',
-                'animation_department', 'art_department', 'make_up_department', 'costume_department',
-                'production_designer', 'production_manager', 'location_management', 
+                'animation_department', 'art_department', 'make_up_department', 
+                'costume_department', 'casting_department', 'transportation_department',
+                'production_department', 'production_designer', 'production_manager', 'location_management', 
                 'thanks', 'self' , 'archive_footage']
 
 tStart = time.time()
@@ -88,11 +89,11 @@ def worker(index):
     soup = bs(resp.text, 'html5lib')
     try:
         # according to the tag of jumpto list to get personal information
-        starmeter = soup.select_one('#meterRank')
+        starmeter = soup.find('a', id='meterRank')
         if (starmeter is not None):
             nminfo_df.loc[index,'starmeter'] = starmeter.text.strip()
-            
-        award = soup.select_one('span[itemprop="awards"]')
+        
+        award = soup.find('span', itemprop='awards')
         if (award is not None):
             nminfo_df.loc[index,'award']=' '.join(award.text.split())
 
